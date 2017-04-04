@@ -167,7 +167,8 @@ function isSampleWritable(aspectModel, aspectName, userName) {
   const options = {};
   options.where = { name: { $iLike: aspectName } };
   return aspectModel.findOne(options)
-  .then((aspect) => Promise.resolve(aspect.isWritableBy(userName)));
+  .then((aspect) => aspect ? Promise.resolve(aspect.isWritableBy(userName)) :
+        Promise.resolve(false));
 } // isSampleWritable
 
 module.exports = {
