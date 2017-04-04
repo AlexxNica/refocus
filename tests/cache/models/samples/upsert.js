@@ -100,6 +100,25 @@ describe(`api::redisEnabled::POST::upsert ${path}`, () => {
     });
   });
 
+  it.only('returns aspectId', (done) => {
+    api.post(path)
+    .set('Authorization', token)
+    .send({
+      name: `${subject.absolutePath}|${aspect.name}`,
+      value: '2',
+    })
+    .expect(constants.httpStatus.OK)
+    .end((err, res) => {
+      if (err) {
+        done(err);
+      }
+
+      expect(tu.looksLikeId(res.body.aspectId)).to.be.true;
+      expect(res.body.aspect).to.be.undefined;
+      done();
+    });
+  });
+
   it('upsert succeeds when the sample does not exist', (done) => {
     api.post(path)
     .set('Authorization', token)
