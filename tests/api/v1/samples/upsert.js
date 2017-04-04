@@ -28,6 +28,7 @@ describe(`api: POST ${path}`, () => {
   let aspect;
   let subject;
   let token;
+  const DONT_EXIST_NAME = 'iDontExist';
   const URL1 = 'https://samples.com';
   const URL2 = 'https://updatedsamples.com';
   const relatedLinks = [
@@ -83,7 +84,77 @@ describe(`api: POST ${path}`, () => {
     });
   });
 
-  describe(`when aspect isPublished false`, () => {
+  describe('not found cases', () => {
+    it('name refers to non existing aspect', (done) => {
+      api.post(path)
+      .set('Authorization', token)
+      .send({
+        name: `${subject.absolutePath}|${DONT_EXIST_NAME}`,
+        value: '2',
+      })
+      .expect(constants.httpStatus.NOT_FOUND)
+      .end((err, res ) => {
+        if (err) {
+          done(err);
+        }
+
+        done();
+      });
+    });
+
+    it('name refers to non existing subject', (done) => {
+      api.post(path)
+      .set('Authorization', token)
+      .send({
+        name: `${DONT_EXIST_NAME}|${aspect.name}`,
+        value: '2',
+      })
+      .expect(constants.httpStatus.NOT_FOUND)
+      .end((err /* , res */) => {
+        if (err) {
+          done(err);
+        }
+
+        done();
+      });
+    });
+  });
+
+  describe(`unpublished subject`, () => {
+    let unPublishedSubjectAbsolutePath;
+
+    // unpublish the subject
+    beforeEach((done) => {
+      Subject.findById(subject.id)
+      .then((subjectOne) => subjectOne.update({
+        isPublished: false,
+      }))
+      .then((_subject) => {
+        unPublishedSubjectAbsolutePath = _subject.absolutePath;
+        done();
+      })
+      .catch(done);
+    });
+
+    it('name refers to unpublished subject', (done) => {
+      api.post(path)
+      .set('Authorization', token)
+      .send({
+        name: `${unPublishedSubjectAbsolutePath.absolutePath}|${aspect.name}`,
+        value: '2',
+      })
+      .expect(constants.httpStatus.NOT_FOUND)
+      .end((err, res ) => {
+        if (err) {
+          done(err);
+        }
+
+        done();
+      });
+    });
+  });
+
+  describe(`unpublished aspect`, () => {
     let updatedAspect;
 
     // unpublish the aspects
@@ -99,7 +170,7 @@ describe(`api: POST ${path}`, () => {
       .catch(done);
     });
 
-    it('sample upsert returns not found', (done) => {
+    it('name refers to unpublished aspect', (done) => {
       api.post(path)
       .set('Authorization', token)
       .send({
