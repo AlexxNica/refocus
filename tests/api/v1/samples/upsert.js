@@ -63,6 +63,26 @@ describe(`api: POST ${path}`, () => {
   afterEach(u.forceDelete);
   after(tu.forceDeleteUser);
 
+  it('name field is required', (done) => {
+    api.post(path)
+    .set('Authorization', token)
+    .send({
+      value: '2',
+    })
+    .expect(constants.httpStatus.BAD_REQUEST)
+    .end((err, res) => {
+      if (err) {
+        done(err);
+      }
+
+      const error = res.body.errors[0];
+      expect(error.message).to.contain('name');
+      expect(error.type)
+        .to.equal(tu.schemaValidationErrorName);
+      done();
+    });
+  });
+
   describe(`when aspect isPublished false`, () => {
     let updatedAspect;
 

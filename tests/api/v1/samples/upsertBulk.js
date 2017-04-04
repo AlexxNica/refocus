@@ -73,6 +73,30 @@ describe('api: POST ' + path, () => {
   after(u.forceDelete);
   after(tu.forceDeleteUser);
 
+  it('name field is required', (done) => {
+    api.post(path)
+    .set('Authorization', token)
+    .send([
+      {
+        value: '2',
+      }, {
+        value: '4',
+      },
+    ])
+    .expect(constants.httpStatus.BAD_REQUEST)
+    .end((err  , res ) => {
+      if (err) {
+        done(err);
+      }
+
+      const error = res.body.errors[0];
+      expect(error.message).to.contain('name');
+      expect(error.type)
+        .to.equal(tu.schemaValidationErrorName);
+      done();
+    });
+  });
+
   it('all succeed', (done) => {
     api.post(path)
     .set('Authorization', token)

@@ -28,6 +28,7 @@ const constants = sampleStore.constants;
 const redisModelSample = require('../../../cache/models/samples');
 const utils = require('./utils');
 const publisher = u.publisher;
+
 module.exports = {
 
   /**
@@ -99,6 +100,7 @@ module.exports = {
    */
   patchSample(req, res, next) {
     utils.noReadOnlyFieldsInReq(req, helper);
+    utils.rejectIfNameInBody(req.body);
     doPatch(req, res, next, helper);
   },
 
@@ -113,6 +115,7 @@ module.exports = {
    */
   postSample(req, res, next) {
     utils.noReadOnlyFieldsInReq(req, helper);
+    utils.rejectIfNameInBody(req.body);
     doPost(req, res, next, helper);
   },
 
@@ -128,6 +131,7 @@ module.exports = {
    */
   putSample(req, res, next) {
     utils.noReadOnlyFieldsInReq(req, helper);
+    utils.rejectIfNameInBody(req.body);
     doPut(req, res, next, helper);
   },
 
