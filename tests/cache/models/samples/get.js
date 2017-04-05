@@ -68,7 +68,7 @@ describe(`api::redisEnabled::GET ${path}`, () => {
 
       for (let i = res.body.length - 1; i >= 0; i--) {
         expect(tu.looksLikeId(res.body[i].aspectId)).to.be.true;
-        // expect(tu.looksLikeId(res.body[i].subjectId)).to.be.true;
+        expect(tu.looksLikeId(res.body[i].subjectId)).to.be.true;
         expect(res.body[i].aspect).to.be.undefined;
       }
 

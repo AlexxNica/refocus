@@ -643,7 +643,7 @@ module.exports = {
 
   /**
    * Post sample. First get subject from db, then get aspect from db, then try
-   * to get sample from Redis. Is sample found, throw error, else create
+   * to get sample from Redis. If sample found, throw error, else create
    * sample. Update sample index and subject set as well.
    * @param  {Object} params - Request parameters
    * @returns {Promise} - Resolves to a sample object
@@ -722,6 +722,7 @@ module.exports = {
         updatedSamp, constants.fieldsToStringify.sample
       );
 
+      sampleRes.subjectId = subject.id;
       // aspect is not attached to match existing behaviour
       return sampleRes;
     });

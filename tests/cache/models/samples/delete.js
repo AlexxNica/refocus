@@ -87,7 +87,7 @@ describe(`api: redisStore: DELETE ${path}`, () => {
       }
 
       expect(tu.looksLikeId(res.body.aspectId)).to.be.true;
-      // expect(tu.looksLikeId(res.body.subjectId)).to.be.true;
+      expect(tu.looksLikeId(res.body.subjectId)).to.be.true;
       expect(res.body.aspect).to.be.undefined;
       done();
     });
