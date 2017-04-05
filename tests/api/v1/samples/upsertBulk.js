@@ -27,6 +27,86 @@ const relatedLinks = [
   { name: 'link2', url: URL1 },
 ];
 
+describe('with un published subject', () => {
+  let token;
+  let aspectIdOne = '';
+  let aspectIdTwo = '';
+
+  before((done) => {
+    tu.createToken()
+    .then((returnedToken) => {
+      token = returnedToken;
+      done();
+    })
+    .catch(done);
+  });
+
+  before((done) => {
+    Aspect.create({
+      isPublished: true,
+      name: `${tu.namePrefix}Aspect1`,
+      timeout: '30s',
+      valueType: 'NUMERIC',
+      criticalRange: [0, 1],
+    })
+    .then((aspectOne) => {
+      aspectIdOne = aspectOne.id;
+      return Aspect.create({
+        isPublished: true,
+        name: `${tu.namePrefix}Aspect2`,
+        timeout: '10m',
+        valueType: 'BOOLEAN',
+        okRange: [10, 100],
+      });
+    })
+    .then((aspectTwo) => {
+      aspectIdTwo = aspectTwo.id;
+      done();
+    })
+    .catch(done);
+  });
+
+  after(u.forceDelete);
+  after(tu.forceDeleteUser);
+
+  let subjectName = `${tu.namePrefix}unpublishMe`;
+  before((done) => {
+    Subject.create({
+      name: subjectName,
+      isPublished: false,
+    })
+    .then(() => done())
+    .catch(done);
+  });
+
+  it('no samples created with un published subject', (done) => {
+    api.post(path)
+    .set('Authorization', token)
+    .send([
+      {
+        name: `${subjectName}|${tu.namePrefix}Aspect1`,
+        value: '2',
+      }, {
+        name: `${subjectName}|${tu.namePrefix}Aspect2`,
+        value: '4',
+      },
+    ])
+    .expect(constants.httpStatus.OK)
+    .end((err /* , res*/) => {
+      if (err) {
+        done(err);
+      }
+
+      Sample.findAll()
+      .then((samp) => {
+        expect(samp).to.have.length(0);
+      })
+      .catch(done);
+      done();
+    });
+  });
+});
+
 describe('api: POST ' + path, () => {
   let token;
   let aspectIdOne = '';
@@ -319,45 +399,6 @@ describe('api: POST ' + path, () => {
           .to.equal(`${tu.namePrefix}Subject|${tu.namePrefix}Aspect1`);
           done();
         });
-      });
-    });
-  });
-
-  describe('with un published subject', () => {
-    let subjectName = `${tu.namePrefix}unpublishMe`;
-    before((done) => {
-      Subject.create({
-        name: subjectName,
-        isPublished: false,
-      })
-      .then(() => done())
-      .catch(done);
-    });
-
-    it('no samples created if subject isPublished is false', (done) => {
-      api.post(path)
-      .set('Authorization', token)
-      .send([
-        {
-          name: `${subjectName}|${tu.namePrefix}Aspect1`,
-          value: '2',
-        }, {
-          name: `${subjectName}|${tu.namePrefix}Aspect2`,
-          value: '4',
-        },
-      ])
-      .expect(constants.httpStatus.OK)
-      .end((err /* , res*/) => {
-        if (err) {
-          done(err);
-        }
-
-        Sample.findAll()
-        .then((samp) => {
-          expect(samp).to.have.length(0);
-        })
-        .catch(done);
-        done();
       });
     });
   });
