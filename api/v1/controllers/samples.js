@@ -151,7 +151,7 @@ module.exports = {
     const resultObj = { reqStartTime: new Date() };
     const sampleQueryBody = req.swagger.params.queryBody.value;
 
-    u.getUserNameFromToken(req,
+    return u.getUserNameFromToken(req,
       featureToggles.isFeatureEnabled('enforceWritePermission'))
     .then((userName) => {
       if (sampleQueryBody.relatedLinks) {

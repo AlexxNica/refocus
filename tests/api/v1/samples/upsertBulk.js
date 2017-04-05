@@ -323,7 +323,46 @@ describe('api: POST ' + path, () => {
     });
   });
 
-  describe('aspect isPublished false', () => {
+  describe('with un published subject', () => {
+    let subjectName = `${tu.namePrefix}unpublishMe`;
+    before((done) => {
+      Subject.create({
+        name: subjectName,
+        isPublished: false,
+      })
+      .then(() => done())
+      .catch(done);
+    });
+
+    it('no samples created if subject isPublished is false', (done) => {
+      api.post(path)
+      .set('Authorization', token)
+      .send([
+        {
+          name: `${subjectName}|${tu.namePrefix}Aspect1`,
+          value: '2',
+        }, {
+          name: `${subjectName}|${tu.namePrefix}Aspect2`,
+          value: '4',
+        },
+      ])
+      .expect(constants.httpStatus.OK)
+      .end((err /* , res*/) => {
+        if (err) {
+          done(err);
+        }
+
+        Sample.findAll()
+        .then((samp) => {
+          expect(samp).to.have.length(0);
+        })
+        .catch(done);
+        done();
+      });
+    });
+  });
+
+  describe('with un published aspect', () => {
     // unpublish the aspects
     before((done) => {
       Aspect.findById(aspectIdOne)
