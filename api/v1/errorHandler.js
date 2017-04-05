@@ -136,7 +136,6 @@ module.exports = function errorHandler(err, req, res, next) {
     // console.log('------------------------------------------------------\n');
     res.status(err.status).json(errResponse);
   } catch (err2) {
-
     // console.log('\n-----ERROR HANDLER CATCH------------------------------');
     // console.log(err2);
     // console.log('STACK: ', util.isError(err2) && err2.stack);

@@ -175,49 +175,51 @@ module.exports = function sample(seq, dataTypes) {
        */
       upsertByName(toUpsert, userName, isBulk) {
         let subjasp;
-        return u.getSubjectAndAspectBySampleName(seq, toUpsert.name)
-        .then((sa) => {
-          subjasp = sa;
-          toUpsert.subjectId = sa.subject.id;
-          toUpsert.aspectId = sa.aspect.id;
-          return featureToggles.isFeatureEnabled('enforceWritePermission') ?
-               sa.aspect.isWritableBy(userName) : true;
-        })
-        .then((ok) => {
-          if (!ok) {
-            throw new dbErrors.UpdateDeleteForbidden();
-          }
+        return new seq.Promise((resolve, reject) => {
+          u.getSubjectAndAspectBySampleName(seq, toUpsert.name)
+          .then((sa) => {
+            subjasp = sa;
+            toUpsert.subjectId = sa.subject.id;
+            toUpsert.aspectId = sa.aspect.id;
+            return featureToggles.isFeatureEnabled('enforceWritePermission') ?
+                 sa.aspect.isWritableBy(userName) : true;
+          })
+          .then((ok) => {
+            if (!ok) {
+              throw new dbErrors.UpdateDeleteForbidden();
+            }
 
-          // up to here
-          return Sample.findOne({
-            where: {
-              subjectId: subjasp.subject.id,
-              aspectId: subjasp.aspect.id,
-            },
-          });
-        })
-        .then((o) => {
-          if (o === null) {
-            return Sample.create(toUpsert);
-          }
-          /*
-           * set value changed to true during updates to avoid timeouts.
-           * Adding this to the before update hook does
-           * give the needed effect; so adding it here!!!.
-           */
-          o.changed('value', true);
-          return o.update(toUpsert);
-        })
-        .catch((err) => {
-          if (isBulk) {
+            return Sample.findOne({
+              where: {
+                subjectId: subjasp.subject.id,
+                aspectId: subjasp.aspect.id,
+              },
+            });
+          })
+          .then((o) => {
+            if (o === null) {
+              return Sample.create(toUpsert);
+            }
             /*
-             * adding isFailed:true to differentiate failed results from
-             * success results in bulk upsert
-            */
-            return { explanation: err, isFailed: true };
-          } else {
-            throw err;
-          }
+             * set value changed to true during updates to avoid timeouts.
+             * Adding this to the before update hook does
+             * give the needed effect; so adding it here!!!.
+             */
+            o.changed('value', true);
+            return o.update(toUpsert);
+          })
+          .then((o) => resolve(o))
+          .catch((err) => {
+            if (isBulk) {
+              /*
+               * adding isFailed:true to differentiate failed results from
+               * success results in bulk upsert
+              */
+              resolve({ explanation: err, isFailed: true });
+            } else {
+              reject(err);
+            }
+          });
         });
       }, // upsertByName
 
