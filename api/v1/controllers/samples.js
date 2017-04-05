@@ -29,19 +29,6 @@ const redisModelSample = require('../../../cache/models/samples');
 const utils = require('./utils');
 const publisher = u.publisher;
 
-/**
- * Check if name field is in the object.
- * Throws validation error if object contains name field.
- * @param  {Object} obj - Request object
- */
-function rejectIfNameInBody(obj) {
-  if (obj && obj.name) {
-    throw new apiErrors.ValidationError({
-      explanation: 'You cannot modify the read-only field: name',
-    });
-  }
-}
-
 module.exports = {
 
   /**
@@ -112,8 +99,7 @@ module.exports = {
    * @param {Function} next - The next middleware function in the stack
    */
   patchSample(req, res, next) {
-    utils.noReadOnlyFieldsInReq(req, helper);
-    rejectIfNameInBody(req.body);
+    utils.noReadOnlyFieldsInReq(req, helper.readOnlyFields);
     doPatch(req, res, next, helper);
   },
 
@@ -127,8 +113,7 @@ module.exports = {
    * @param {Function} next - The next middleware function in the stack
    */
   postSample(req, res, next) {
-    utils.noReadOnlyFieldsInReq(req, helper);
-    rejectIfNameInBody(req.body);
+    utils.noReadOnlyFieldsInReq(req, helper.readOnlyFields);
     doPost(req, res, next, helper);
   },
 
@@ -143,8 +128,7 @@ module.exports = {
    * @param {Function} next - The next middleware function in the stack
    */
   putSample(req, res, next) {
-    utils.noReadOnlyFieldsInReq(req, helper);
-    rejectIfNameInBody(req.body);
+    utils.noReadOnlyFieldsInReq(req, helper.readOnlyFields);
     doPut(req, res, next, helper);
   },
 
@@ -160,7 +144,10 @@ module.exports = {
    * @param {Function} next - The next middleware function in the stack
    */
   upsertSample(req, res, next) {
-    utils.noReadOnlyFieldsInReq(req, helper);
+
+    // make the name post-able
+    const readOnlyFields = helper.readOnlyFields.filter((field) => field !== 'name');
+    utils.noReadOnlyFieldsInReq(req, readOnlyFields);
     const resultObj = { reqStartTime: new Date() };
     const sampleQueryBody = req.swagger.params.queryBody.value;
 
@@ -214,7 +201,10 @@ module.exports = {
    *  bulk upsert request has been received.
    */
   bulkUpsertSample(req, res/* , next */) {
-    utils.noReadOnlyFieldsInReq(req, helper);
+
+    // make the name post-able
+    const readOnlyFields = helper.readOnlyFields.filter((field) => field !== 'name');
+    utils.noReadOnlyFieldsInReq(req, readOnlyFields);
     const resultObj = { reqStartTime: new Date() };
     const reqStartTime = Date.now();
     const value = req.swagger.params.queryBody.value;
