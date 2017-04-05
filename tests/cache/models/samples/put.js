@@ -62,6 +62,23 @@ describe(`api: cache: PUT ${path}`, () => {
   after(() => tu.toggleOverride('enableRedisSampleStore', false));
 
   describe('Lists: ', () => {
+    it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
+      api.put(`${path}/${sampleName}`)
+      .set('Authorization', token)
+      .send({ value: '3' })
+      .expect(constants.httpStatus.OK)
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        }
+
+        expect(tu.looksLikeId(res.body.aspectId)).to.be.true;
+        // expect(tu.looksLikeId(res.body.subjectId)).to.be.true;
+        expect(res.body.aspect).to.be.undefined;
+        done();
+      });
+    });
+
     it('basic put does not return id', (done) => {
       api.put(`${path}/${sampleName}`)
       .set('Authorization', token)

@@ -144,7 +144,7 @@ function cleanAddAspectToSample(sampleObj, aspectObj) {
     aspectObj, constants.fieldsToStringify.aspect
   );
 
-  sampleRes.aspect = aspect;
+  sampleRes.aspectId = aspect.id;
   return sampleRes;
 }
 

@@ -115,6 +115,23 @@ describe(`api: redisStore: POST ${path}`, () => {
     });
   });
 
+  it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
+    api.post(path)
+    .set('Authorization', token)
+    .send(sampleToPost)
+    .expect(constants.httpStatus.CREATED)
+    .end((err, res) => {
+      if (err) {
+        done(err);
+      }
+
+      expect(tu.looksLikeId(res.body.aspectId)).to.be.true;
+      // expect(tu.looksLikeId(res.body.subjectId)).to.be.true;
+      expect(res.body.aspect).to.be.undefined;
+      done();
+    });
+  });
+
   it('basic post /samples', (done) => {
     api.post(path)
     .set('Authorization', token)
