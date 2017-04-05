@@ -183,52 +183,52 @@ function parseName(name) {
  *  cannot be found
  */
 function getSubjectAndAspectBySampleName(seq, sampleName, idsOnly) {
-    const parsedName = parseName(sampleName);
-    const subjectFinder = {
-      where: {
-        absolutePath: {
-          $iLike: parsedName.subject.absolutePath,
-        },
+  const parsedName = parseName(sampleName);
+  const subjectFinder = {
+    where: {
+      absolutePath: {
+        $iLike: parsedName.subject.absolutePath,
       },
-    };
-    const aspectFinder = {
-      where: {
-        name: {
-          $iLike: parsedName.aspect.name,
-        },
+    },
+  };
+  const aspectFinder = {
+    where: {
+      name: {
+        $iLike: parsedName.aspect.name,
       },
-    };
+    },
+  };
 
-    if (idsOnly) {
-      subjectFinder.attributes = ['id'];
-      aspectFinder.attributes = ['id'];
+  if (idsOnly) {
+    subjectFinder.attributes = ['id'];
+    aspectFinder.attributes = ['id'];
+  }
+
+  const retval = {};
+  return seq.models.Subject.findOne(subjectFinder)
+  .then((s) => {
+    if (s) {
+      retval.subject = s;
+      return retval;
     }
 
-    const retval = {};
-    return seq.models.Subject.findOne(subjectFinder)
-    .then((s) => {
-      if (s) {
-        retval.subject = s;
-        return retval;
-      } else {
-        const err = new dbErrors.ResourceNotFoundError();
-        err.resourceType = 'Subject';
-        err.resourceKey = parsedName.subject.absolutePath;
-        throw err;
-      }
-    })
-    .then(() => seq.models.Aspect.findOne(aspectFinder))
-    .then((a) => {
-      if (a) {
-        retval.aspect = a;
-        return retval;
-      } else {
-        const err = new dbErrors.ResourceNotFoundError();
-        err.resourceType = 'Aspect';
-        err.resourceKey = parsedName.aspect.name;
-        throw err;
-      }
-    })
+    const err = new dbErrors.ResourceNotFoundError();
+    err.resourceType = 'Subject';
+    err.resourceKey = parsedName.subject.absolutePath;
+    throw err;
+  })
+  .then(() => seq.models.Aspect.findOne(aspectFinder))
+  .then((a) => {
+    if (a) {
+      retval.aspect = a;
+      return retval;
+    }
+
+    const err = new dbErrors.ResourceNotFoundError();
+    err.resourceType = 'Aspect';
+    err.resourceKey = parsedName.aspect.name;
+    throw err;
+  });
 } // getSubjectAndAspectBySampleName
 
 /**

@@ -12,7 +12,7 @@
 'use strict'; // eslint-disable-line strict
 
 const featureToggles = require('feature-toggles');
-
+const apiErrors = require('../apiErrors');
 const helper = require('../helpers/nouns/samples');
 const subHelper = require('../helpers/nouns/subjects');
 const doDelete = require('../helpers/verbs/doDelete');
@@ -28,6 +28,19 @@ const constants = sampleStore.constants;
 const redisModelSample = require('../../../cache/models/samples');
 const utils = require('./utils');
 const publisher = u.publisher;
+
+/**
+ * Check if name field is in the object.
+ * Throws validation error if object contains name field.
+ * @param  {Object} obj - Request object
+ */
+function rejectIfNameInBody(obj) {
+  if (obj && obj.name) {
+    throw new apiErrors.ValidationError({
+      explanation: 'You cannot modify the read-only field: name',
+    });
+  }
+}
 
 module.exports = {
 
@@ -100,7 +113,7 @@ module.exports = {
    */
   patchSample(req, res, next) {
     utils.noReadOnlyFieldsInReq(req, helper);
-    utils.rejectIfNameInBody(req.body);
+    rejectIfNameInBody(req.body);
     doPatch(req, res, next, helper);
   },
 
@@ -115,7 +128,7 @@ module.exports = {
    */
   postSample(req, res, next) {
     utils.noReadOnlyFieldsInReq(req, helper);
-    utils.rejectIfNameInBody(req.body);
+    rejectIfNameInBody(req.body);
     doPost(req, res, next, helper);
   },
 
@@ -131,7 +144,7 @@ module.exports = {
    */
   putSample(req, res, next) {
     utils.noReadOnlyFieldsInReq(req, helper);
-    utils.rejectIfNameInBody(req.body);
+    rejectIfNameInBody(req.body);
     doPut(req, res, next, helper);
   },
 

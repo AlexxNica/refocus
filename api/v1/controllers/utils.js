@@ -46,19 +46,6 @@ function hasDuplicates(tagsArr) {
 }
 
 /**
- * Check if name field is in the object.
- * Throws validation error if object contains name field.
- * @param  {Object} obj - Request object
- */
-function rejectIfNameInBody(obj) {
-  if (obj && obj.name) {
-    throw new apiErrors.ValidationError({
-      explanation: 'You cannot modify the read-only field: name',
-    });
-  }
-}
-
-/**
  * Check if read only field exists in given object
  * @param  {String} field - Field name
  * @param  {Object} obj - Request object
@@ -95,7 +82,6 @@ function noReadOnlyFieldsInReq(req, props) {
 } // noReadOnlyFieldsInReq
 
 module.exports = {
-  rejectIfNameInBody,
   hasDuplicates,
   noReadOnlyFieldsInReq,
 };

@@ -185,7 +185,7 @@ module.exports = function sample(seq, dataTypes) {
         })
         .then((ok) => {
           if (!ok) {
-            throw new UpdateDeleteForbidden();
+            throw new dbErrors.UpdateDeleteForbidden();
           }
 
           // up to here
@@ -194,7 +194,7 @@ module.exports = function sample(seq, dataTypes) {
               subjectId: subjasp.subject.id,
               aspectId: subjasp.aspect.id,
             },
-          })
+          });
         })
         .then((o) => {
           if (o === null) {

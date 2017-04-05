@@ -85,7 +85,7 @@ describe(`api: POST ${path}`, () => {
   });
 
   describe('not found cases', () => {
-    it('name refers to non existing aspect', (done) => {
+    it('with non existing aspect', (done) => {
       api.post(path)
       .set('Authorization', token)
       .send({
@@ -102,7 +102,7 @@ describe(`api: POST ${path}`, () => {
       });
     });
 
-    it('name refers to non existing subject', (done) => {
+    it('with non existing subject', (done) => {
       api.post(path)
       .set('Authorization', token)
       .send({
@@ -120,7 +120,7 @@ describe(`api: POST ${path}`, () => {
     });
   });
 
-  describe(`unpublished subject`, () => {
+  describe(`un published subject`, () => {
     let unPublishedSubjectAbsolutePath;
 
     // unpublish the subject
@@ -154,7 +154,7 @@ describe(`api: POST ${path}`, () => {
     });
   });
 
-  describe(`unpublished aspect`, () => {
+  describe(`un published aspect`, () => {
     let updatedAspect;
 
     // unpublish the aspects
