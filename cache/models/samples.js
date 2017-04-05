@@ -140,11 +140,7 @@ function cleanAddAspectToSample(sampleObj, aspectObj) {
     sampleObj, constants.fieldsToStringify.sample
   );
 
-  const aspect = sampleStore.arrayStringsToJson(
-    aspectObj, constants.fieldsToStringify.aspect
-  );
-
-  sampleRes.aspectId = aspect.id;
+  sampleRes.aspectId = aspectObj.id;
   return sampleRes;
 }
 

@@ -101,7 +101,7 @@ describe('api::cache::timeout', () => {
   afterEach(rtu.forceDelete);
   after(() => tu.toggleOverride('enableRedisSampleStore', false));
 
-  it.skip('returns aspectId, subjectId, and NO aspect object', (done) => {
+  it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
     const mockUpdatedAt = updatedAt;
     mockUpdatedAt.setHours(updatedAt.getHours() +
       (twentyFourhours * hundredDays));
@@ -110,10 +110,9 @@ describe('api::cache::timeout', () => {
       const { timedOutSamples } = res;
       for (let i = timedOutSamples.length - 1; i >= 0; i--) {
         const { subjectId, aspectId, aspect } = timedOutSamples[i];
-        console.log('in timeout test', subjectId, aspectId, aspect);
-        // expect(tu.looksLikeId(aspectId)).to.be.true;
+        expect(tu.looksLikeId(aspectId)).to.be.true;
         // // expect(tu.looksLikeId(subjectId)).to.be.true;
-        // expect(aspect).to.be.undefined;
+        expect(aspect).to.be.undefined;
       }
       done();
     })
