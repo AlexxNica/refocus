@@ -389,6 +389,7 @@ function upsertOneSample(sampleQueryBodyObj, isBulk, userName) {
   const subjKey = sampleStore.toKey(
     constants.objectType.subject, subjAspArr[ZERO]
   );
+  console.log('subject key is', subjKey)
   const sampleKey = sampleStore.toKey(
     constants.objectType.sample, sampleName
   );

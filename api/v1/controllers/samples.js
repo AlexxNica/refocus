@@ -146,6 +146,7 @@ module.exports = {
     utils.noReadOnlyFieldsInReq(req, helper);
     const resultObj = { reqStartTime: new Date() };
     const sampleQueryBody = req.swagger.params.queryBody.value;
+    console.log('called in api', sampleQueryBody)
 
     u.getUserNameFromToken(req,
       featureToggles.isFeatureEnabled('enforceWritePermission'))
