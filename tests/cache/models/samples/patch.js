@@ -77,7 +77,7 @@ describe(`api: redisStore: PATCH ${path}`, () => {
       });
     });
 
-    it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
+    it('returns aspectId, subjectId, and NO aspect object', (done) => {
       api.patch(`${path}/${sampleName}`)
       .set('Authorization', token)
       .send({ value: '3' })

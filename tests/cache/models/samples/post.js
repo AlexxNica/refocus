@@ -115,7 +115,7 @@ describe(`api: redisStore: POST ${path}`, () => {
     });
   });
 
-  it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
+  it('returns aspectId, subjectId, and NO aspect object', (done) => {
     api.post(path)
     .set('Authorization', token)
     .send(sampleToPost)

@@ -77,7 +77,7 @@ describe(`api: redisStore: DELETE ${path}`, () => {
     });
   });
 
-  it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
+  it('returns aspectId, subjectId, and NO aspect object', (done) => {
     api.delete(`${path}/${sampleName}`)
     .set('Authorization', token)
     .expect(constants.httpStatus.OK)

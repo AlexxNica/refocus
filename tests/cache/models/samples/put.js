@@ -62,7 +62,7 @@ describe(`api: cache: PUT ${path}`, () => {
   after(() => tu.toggleOverride('enableRedisSampleStore', false));
 
   describe('Lists: ', () => {
-    it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
+    it('returns aspectId, subjectId, and NO aspect object', (done) => {
       api.put(`${path}/${sampleName}`)
       .set('Authorization', token)
       .send({ value: '3' })

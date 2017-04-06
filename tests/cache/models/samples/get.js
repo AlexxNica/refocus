@@ -57,7 +57,7 @@ describe(`api::redisEnabled::GET ${path}`, () => {
     });
   });
 
-  it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
+  it('returns aspectId, subjectId, and NO aspect object', (done) => {
     api.get(path)
     .set('Authorization', token)
     .expect(constants.httpStatus.OK)
@@ -76,7 +76,7 @@ describe(`api::redisEnabled::GET ${path}`, () => {
     });
   });
 
-  it('basic get all, sorted lexicographically by default', (done) => {
+  it.only('basic get all, sorted lexicographically by default', (done) => {
     api.get(path)
     .set('Authorization', token)
     .expect(constants.httpStatus.OK)
@@ -86,6 +86,7 @@ describe(`api::redisEnabled::GET ${path}`, () => {
       }
 
       expect(res.body.length).to.be.equal(3);
+      console.log(res.body[0].name)
       expect(res.body[0].name).to.be.equal(s1s2a1);
       expect(res.body[1].name).to.be.equal(s1s2a2);
       expect(res.body[2].name).to.be.equal(s1s3a1);

@@ -100,7 +100,7 @@ describe(`api::redisEnabled::POST::upsert ${path}`, () => {
     });
   });
 
-  it.only('returns aspectId, subjectId, and NO aspect object', (done) => {
+  it('returns aspectId, subjectId, and NO aspect object', (done) => {
     api.post(path)
     .set('Authorization', token)
     .send({
@@ -114,7 +114,7 @@ describe(`api::redisEnabled::POST::upsert ${path}`, () => {
       }
 
       expect(tu.looksLikeId(res.body.aspectId)).to.be.true;
-      // expect(tu.looksLikeId(res.body.subjectId)).to.be.true;
+      expect(tu.looksLikeId(res.body.subjectId)).to.be.true;
       expect(res.body.aspect).to.be.undefined;
       done();
     });

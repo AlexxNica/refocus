@@ -140,7 +140,7 @@ function cleanAddAspectToSample(sampleObj, aspectObj) {
     sampleObj, constants.fieldsToStringify.sample
   );
 
-  sampleRes.aspectId = aspectObj.id;
+  // sampleRes.aspectId = aspectObj.id;
   return sampleRes;
 }
 
@@ -540,12 +540,15 @@ module.exports = {
       return redisOps.getHashPromise(aspectType, aspectName);
     })
     .then((aspObj) => {
+      console.log('in delete related links', aspObj)
+
       if (!aspObj) {
         throw new redisErrors.ResourceNotFoundError({
           explanation: 'Aspect not found.',
         });
       }
 
+      aspectObj = aspObj
       let updatedRlinks = [];
       if (params.relName) { // delete only this related link
         const currRlinks = JSON.parse(currSampObj.relatedLinks);
@@ -573,7 +576,9 @@ module.exports = {
       return redisOps.setHashMultiPromise(sampleType, sampleName, hmsetObj);
     })
     .then(() => redisOps.getHashPromise(sampleType, sampleName))
-    .then((updatedSamp) => cleanAddAspectToSample(updatedSamp, aspectObj));
+    .then((updatedSamp) => {
+      return cleanAddAspectToSample(updatedSamp, aspectObj);
+    });
   },
 
   /**
@@ -723,7 +728,7 @@ module.exports = {
         updatedSamp, constants.fieldsToStringify.sample
       );
 
-      sampleRes.subjectId = subject.id;
+      // sampleRes.subjectId = subject.id;
       // aspect is not attached to match existing behaviour
       return sampleRes;
     });

@@ -106,18 +106,16 @@ describe(`api: GET ${path}`, () => {
     it('should be a non empty object at the grandchild level', (done) => {
       api.get(path.replace('{key}', ipar))
       .set('Authorization', token)
-      .expect(constants.httpStatus.OK)
-      .expect((res) => {
-        expect(res.body.children[0].children[0].samples).to.be
-          .an('array');
-        expect(res.body.children[0].children[0].samples).to.not
-          .empty;
-      })
-      .end((err /* , res */) => {
+      // .expect(constants.httpStatus.OK)
+      .end((err  , res ) => {
         if (err) {
           done(err);
         }
 
+        expect(res.body.children[0].children[0].samples).to.be
+          .an('array');
+        expect(res.body.children[0].children[0].samples).to.not
+          .empty;
         done();
       });
     });
@@ -164,8 +162,12 @@ describe(`api: GET ${path}`, () => {
   it('by id', (done) => {
     api.get(path.replace('{key}', ipar))
     .set('Authorization', token)
-    .expect(constants.httpStatus.OK)
-    .expect((res) => {
+    // .expect(constants.httpStatus.OK)
+    .end((err, res) => {
+      if (err) {
+        done(err);
+      }
+
       // parent level
       expect(res.body.samples).to.be.an('array');
       expect(res.body.children).to.have.length(res.body.childCount);
@@ -175,11 +177,6 @@ describe(`api: GET ${path}`, () => {
       expect(res.body.children[0].children).to.be.an('array');
       expect(res.body.children[0].children).to.have
         .length(res.body.children[0].childCount);
-    })
-    .end((err /* , res */) => {
-      if (err) {
-        done(err);
-      }
 
       done();
     });
