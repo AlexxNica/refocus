@@ -352,7 +352,7 @@ module.exports = function sample(seq, dataTypes) {
         fields: ['aspectId', 'subjectId'],
       },
       {
-        name: 'SampleStatus',
+        name: 'SampleStatusIdx',
         fields: [
           'status',
         ],
